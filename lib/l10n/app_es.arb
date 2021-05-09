@@ -1,3 +1,6 @@
 {
-    "titleApp": "Mi Aguila"
+    "titleMapScreen": "Mi Aguila Mapa",
+    "enableAccess" : "Habilitar acceso",
+    "locationPermissionsNeed" : "Para usar esta aplicación necesitas los permisos de ubicación",
+    "gpsDisable" : "Para usar esta aplicación necesitas activar el gps"
 }
