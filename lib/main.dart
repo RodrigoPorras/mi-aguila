@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+import 'dart:async';
+import 'dart:developer';
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Material App',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Material App Bar'),
-        ),
-        body: Center(
-          child: Container(
-            child: Text('Hello World'),
-          ),
-        ),
-      ),
-    );
-  }
+import 'package:bloc/bloc.dart';
+
+import 'package:mi_aguila/app/app.dart';
+import 'package:mi_aguila/app/app_bloc_observer.dart';
+
+void main() {
+  Bloc.observer = AppBlocObserver();
+  FlutterError.onError = (details) {
+    log(details.exceptionAsString(), stackTrace: details.stack);
+  };
+  runZonedGuarded(
+    () => runApp(const App()),
+    (error, stackTrace) => log(error.toString(), stackTrace: stackTrace),
+  );
 }
