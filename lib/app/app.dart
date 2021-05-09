@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mi_aguila/map/bloc/map_bloc.dart';
+import 'package:mi_aguila/map/my_location/bloc/my_location_bloc.dart';
 import 'package:mi_aguila/map/permissions/bloc/permissions_bloc.dart';
 
 import 'package:mi_aguila/routes/routes.dart' as routes;
@@ -15,8 +17,15 @@ class App extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-            create: (context) =>
-                PermissionsBloc()..add(OnFetchPermissionStatusEvent())),
+          create: (context) =>
+              PermissionsBloc()..add(OnFetchPermissionStatusEvent()),
+        ),
+        BlocProvider(
+          create: (context) => MyLocationBloc(),
+        ),
+        BlocProvider(
+          create: (context) => MapBloc(),
+        )
       ],
       child: MaterialApp(
         title: 'Mi Aguila App',
