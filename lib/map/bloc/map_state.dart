@@ -1,6 +1,11 @@
 part of 'map_bloc.dart';
 
 @immutable
-abstract class MapState {}
+abstract class MapState {
+  @override
+  String toString() {
+    return this.runtimeType.toString();
+  }
+}
 
-class MapInitial extends MapState {}
+class MapInitialState extends MapState {}

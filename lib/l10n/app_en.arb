@@ -1,6 +1,9 @@
 {
-    "titleApp": "My Aguila",
-    "@titleApp": {
+    "titleMapScreen": "My Aguila Map",
+    "@titleMapScreen": {
       "description": "The main title of the app"
-    }
+    },
+    "enableAccess": "Enable access",
+    "locationPermissionsNeed" : "To use this application you need the location permissions",
+    "gpsDisable" : "To use this application you need GPS enabled"
 }
