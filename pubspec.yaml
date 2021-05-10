@@ -19,8 +19,9 @@ dependencies:
   permission_handler: ^5.1.0+2
   location_permissions: ^3.0.0+1
   google_maps_flutter: ^1.2.0
-  dio: ^3.0.10
+  very_good_analysis: ^2.0.0
   cupertino_icons: ^1.0.2
+  
 
 dev_dependencies:
   flutter_test:
