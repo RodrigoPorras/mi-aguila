@@ -1,16 +1,17 @@
 # mi_aguila
 
-A new Flutter project.
-
 ## Getting Started
+Flutter version: 1.26.0-17.8.pre • channel beta •
 
-This project is a starting point for a Flutter application.
+Small project made in flutter that allows you to visualize a drawn path and the speed while you are traveling on it.
 
-A few resources to get you started if this is your first Flutter project:
+- It was made using the GitFlow Workflow
+- Uses Git Actions for continuos integration.
+- Some Unit test
+- Uses BLOC pattern for state managment
+- Its try to use a clean arquitecture folder organization
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Prev:
+
+<img src="https://github.com/RodrigoPorras/mi-aguila/blob/master/gif/1.gif" height="369" />
