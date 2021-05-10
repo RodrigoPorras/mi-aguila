@@ -4,9 +4,9 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
 import 'package:permission_handler/permission_handler.dart';
-import 'package:geolocator/geolocator.dart' as geo;
 import 'package:location_permissions/location_permissions.dart'
     as l_permissions;
+import 'package:location/location.dart' as location;
 
 part 'permissions_event.dart';
 part 'permissions_state.dart';
@@ -71,7 +71,8 @@ class PermissionsBloc extends Bloc<PermissionsEvent, PermissionsState> {
     yield FetchingPermissionsState(state.model.copyWith());
 
     final locationStatus = await Permission.location.isGranted;
-    final gpsStatus = await geo.Geolocator.isLocationServiceEnabled();
+    final gpsStatus = await location.Location().serviceEnabled();
+
     yield RefreshPermissionStatus(
       state.model.copyWith(
         locationPermissionEnabled: locationStatus,
