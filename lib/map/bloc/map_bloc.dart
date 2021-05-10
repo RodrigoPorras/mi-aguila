@@ -94,7 +94,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         var pngBytes = byteData.buffer.asUint8List();
         return pngBytes;
       } catch (e) {
-        print(e);
+        return null;
       }
     }
 
