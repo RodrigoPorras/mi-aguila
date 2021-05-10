@@ -1,7 +1,7 @@
 part of 'map_bloc.dart';
 
 @immutable
-abstract class MapState {
+abstract class MapState extends Equatable {
   final Model model;
 
   MapState(this.model);
@@ -10,6 +10,9 @@ abstract class MapState {
   String toString() {
     return this.runtimeType.toString();
   }
+
+  @override
+  List<Object> get props => [model];
 }
 
 class MapInitialState extends MapState {
@@ -20,7 +23,7 @@ class RefreshMapState extends MapState {
   RefreshMapState(Model model) : super(model);
 }
 
-class Model {
+class Model extends Equatable {
   final bool mapReady;
   final bool drawPathAndMeasure;
   final Polyline polyline;
@@ -45,4 +48,12 @@ class Model {
         polyline: polyline ?? this.polyline,
         customMarker: customMarker ?? this.customMarker,
       );
+
+  @override
+  List<Object> get props => [
+        mapReady,
+        drawPathAndMeasure,
+        polyline,
+        customMarker,
+      ];
 }
