@@ -5,6 +5,7 @@ abstract class MyLocationEvent {}
 
 class OnLocationChange extends MyLocationEvent {
   final LatLng newPos;
+  final double speed;
 
-  OnLocationChange(this.newPos);
+  OnLocationChange(this.newPos, this.speed);
 }

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
 
@@ -11,15 +11,45 @@ part 'my_location_state.dart';
 class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState> {
   MyLocationBloc() : super(MyLocationInitial(Model()));
 
-  StreamSubscription<Position> _currentLocationSubscription;
+  StreamSubscription<LocationData> _currentLocationSubscription;
 
   void startFollowing() async {
-    _currentLocationSubscription = Geolocator.getPositionStream(
-      desiredAccuracy: LocationAccuracy.best,
-      distanceFilter: 10,
-    ).listen((position) {
-      final newPos = LatLng(position.latitude, position.longitude);
-      add(OnLocationChange(newPos));
+    Location location = Location();
+
+    location.changeSettings(
+      accuracy: LocationAccuracy.navigation,
+      interval: 3,
+    );
+
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _currentLocationSubscription =
+        location.onLocationChanged.listen((LocationData currentLocation) {
+      final newPos =
+          LatLng(currentLocation.latitude, currentLocation.longitude);
+      final speed = currentLocation.speed;
+
+      add(OnLocationChange(
+        newPos,
+        speed,
+      ));
     });
   }
 
@@ -41,6 +71,11 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState> {
   }
 
   Stream<MyLocationState> _onLocationChange(OnLocationChange event) async* {
-    yield RefreshLocationState(state.model.copyWith(location: event.newPos));
+    yield RefreshLocationState(
+      state.model.copyWith(
+        location: event.newPos,
+        speed: event.speed,
+      ),
+    );
   }
 }

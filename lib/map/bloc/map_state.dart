@@ -24,32 +24,25 @@ class Model {
   final bool mapReady;
   final bool drawPathAndMeasure;
   final Polyline polyline;
-  final ScreenPosition screenPos;
+  final BitmapDescriptor customMarker;
 
   Model({
     this.mapReady = false,
     this.drawPathAndMeasure = false,
     this.polyline,
-    this.screenPos,
+    this.customMarker,
   });
 
   Model copyWith({
     bool mapReady,
     bool drawPathAndMeasure,
     Polyline polyline,
-    ScreenPosition screenPos,
+    BitmapDescriptor customMarker,
   }) =>
       Model(
         mapReady: mapReady ?? this.mapReady,
         drawPathAndMeasure: drawPathAndMeasure ?? this.drawPathAndMeasure,
         polyline: polyline ?? this.polyline,
-        screenPos: screenPos ?? this.screenPos,
+        customMarker: customMarker ?? this.customMarker,
       );
-}
-
-class ScreenPosition {
-  final double x;
-  final double y;
-
-  ScreenPosition({this.x, this.y});
 }

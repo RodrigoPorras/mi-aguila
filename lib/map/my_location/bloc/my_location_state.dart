@@ -17,16 +17,19 @@ class RefreshLocationState extends MyLocationState {
 
 class Model {
   final LatLng location;
+  final double speed;
 
   Model({
     this.location,
+    this.speed,
   });
 
   Model copyWith({
     LatLng location,
-    ScreenCoordinate screenPos,
+    double speed,
   }) =>
       Model(
         location: location ?? this.location,
+        speed: speed ?? this.speed,
       );
 }

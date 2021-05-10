@@ -2,8 +2,12 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart';
 
 part 'map_event.dart';
 part 'map_state.dart';
@@ -69,19 +73,32 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   Stream<MapState> _onAddNewLine(OnAddNewLine event) async* {
     var points = [...state.model.polyline.points, event.pos];
 
-    /* final coordinate = await _googleMapController.getScreenCoordinate(
-      event.pos,
-    );
-    final ratio = MediaQuery.of(event.context).devicePixelRatio;
-
-    var _x = coordinate.x.toDouble() / ratio;
-    var _y = coordinate.y.toDouble() / ratio; */
+    final bitmap = await getCustomIcon(event.markerKey);
 
     yield RefreshMapState(
       state.model.copyWith(
         polyline: state.model.polyline.copyWith(pointsParam: points),
-        // screenPos: ScreenPosition(x: _x, y: _y),
+        customMarker: bitmap,
       ),
     );
+  }
+
+  Future<BitmapDescriptor> getCustomIcon(GlobalKey iconKey) async {
+    Future<Uint8List> _capturePng(GlobalKey iconKey) async {
+      try {
+        RenderRepaintBoundary boundary =
+            iconKey.currentContext.findRenderObject();
+        ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+        ByteData byteData =
+            await image.toByteData(format: ui.ImageByteFormat.png);
+        var pngBytes = byteData.buffer.asUint8List();
+        return pngBytes;
+      } catch (e) {
+        print(e);
+      }
+    }
+
+    Uint8List imageData = await _capturePng(iconKey);
+    return BitmapDescriptor.fromBytes(imageData);
   }
 }

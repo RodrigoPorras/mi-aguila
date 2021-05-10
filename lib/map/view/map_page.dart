@@ -1,10 +1,5 @@
-import 'dart:typed_data';
-import 'dart:ui' as ui;
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mi_aguila/l10n/l10n.dart';
@@ -21,7 +16,7 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
-  GlobalKey iconKey = GlobalKey();
+  GlobalKey markerKey = GlobalKey();
 
   @override
   void initState() {
@@ -86,28 +81,41 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   Widget _map() {
     var cameraPosition = CameraPosition(
       target: LatLng(4.667426, -74.056624),
-      zoom: 16,
+      zoom: 17,
     );
     return Stack(
       children: [
         BlocBuilder<MyLocationBloc, MyLocationState>(
           builder: (context, state) {
             if (state is RefreshLocationState) {
+              return _markerWidget(state.model.speed);
+            }
+            return SizedBox.shrink();
+          },
+        ),
+        BlocBuilder<MyLocationBloc, MyLocationState>(
+          builder: (context, state) {
+            if (state is RefreshLocationState) {
               context.read<MapBloc>().moveCamera(state.model.location);
+
               if (context.read<MapBloc>().state.model.drawPathAndMeasure) {
-                context.read<MapBloc>().add(
-                    OnAddNewLine(pos: state.model.location, context: context));
+                context.read<MapBloc>().add(OnAddNewLine(
+                    pos: state.model.location, markerKey: markerKey));
               }
               cameraPosition = CameraPosition(
                 target: state.model.location,
-                zoom: 16,
+                zoom: 17,
               );
             }
 
-            /* final currentPosMarker = Marker(
-              markerId: MarkerId('current_pos'),
-              position: state.model.location,
-            ); */
+            final currentPosMarker = (state.model.location != null &&
+                    context.read<MapBloc>().state.model.drawPathAndMeasure)
+                ? Marker(
+                    markerId: MarkerId('current_pos'),
+                    position: state.model.location,
+                    icon: context.read<MapBloc>().state.model.customMarker,
+                  )
+                : null;
 
             return GoogleMap(
               initialCameraPosition: cameraPosition,
@@ -119,21 +127,10 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
               polylines: context.read<MapBloc>().state.model.polyline != null
                   ? {context.read<MapBloc>().state.model.polyline}
                   : {},
-              //markers: {currentPosMarker},
+              markers: currentPosMarker != null ? {currentPosMarker} : {},
             );
           },
         ),
-        /* BlocBuilder<MapBloc, MapState>(
-          builder: (context, state) {
-            if (state is RefreshMapState && state.model.drawPathAndMeasure) {
-              return Positioned(
-                  top: state.model.screenPos.x,
-                  left: state.model.screenPos.y,
-                  child: CircleAvatar());
-            }
-            return Container();
-          },
-        ), */
         BlocBuilder<PermissionsBloc, PermissionsState>(
           builder: (context, state) {
             if (state is RefreshPermissionStatus &&
@@ -155,46 +152,42 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
     );
   }
 
-  _getMarkerAsImage() async {
-    RenderRepaintBoundary boundary = iconKey.currentContext.findRenderObject();
-    ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+  Widget _markerWidget(double speed) {
+    final finalStringSpeed =
+        '${speed * 3600 / 1000 > 0 ? (speed * 3600 / 1000).toStringAsFixed(2) : 0} KM/h';
 
-    ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-
-    var pngBytes = byteData.buffer.asUint8List();
-
-    return pngBytes;
-  }
-
-  Future<BitmapDescriptor> getCustomIcon(GlobalKey iconKey) async {
-    Future<Uint8List> _capturePng(GlobalKey iconKey) async {
-      try {
-        print('inside');
-        RenderRepaintBoundary boundary =
-            iconKey.currentContext.findRenderObject();
-        ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-        ByteData byteData =
-            await image.toByteData(format: ui.ImageByteFormat.png);
-        var pngBytes = byteData.buffer.asUint8List();
-        print(pngBytes);
-        return pngBytes;
-      } catch (e) {
-        print(e);
-      }
-    }
-
-    Uint8List imageData = await _capturePng(iconKey);
-    return BitmapDescriptor.fromBytes(imageData);
-  }
-
-  Widget _markerWidget() {
     return RepaintBoundary(
-      key: iconKey,
-      child: IconButton(
-          icon: Icon(Icons.star),
-          onPressed: () {
-            // Do something
-          }),
+      key: markerKey,
+      child: Container(
+        height: 120,
+        width: 120,
+        margin: EdgeInsets.only(bottom: 10.0),
+        child: Stack(
+          children: [
+            CircleAvatar(
+              radius: 70,
+              backgroundImage: AssetImage('assets/images/mi_aguila.png'),
+              backgroundColor: Colors.transparent,
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                padding: EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Text(
+                  'Speed: $finalStringSpeed',
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

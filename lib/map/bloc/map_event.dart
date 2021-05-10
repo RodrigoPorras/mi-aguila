@@ -11,7 +11,7 @@ class OnStopDrawPathAndMeasure extends MapEvent {}
 
 class OnAddNewLine extends MapEvent {
   final LatLng pos;
-  final BuildContext context;
+  final GlobalKey markerKey;
 
-  OnAddNewLine({this.pos, this.context});
+  OnAddNewLine({this.pos, this.markerKey});
 }
