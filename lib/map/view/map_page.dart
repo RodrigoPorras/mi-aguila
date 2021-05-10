@@ -85,6 +85,11 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
     );
     return Stack(
       children: [
+        Container(
+          height: double.infinity,
+          width: double.infinity,
+          color: Colors.white,
+        ),
         BlocBuilder<MyLocationBloc, MyLocationState>(
           builder: (context, state) {
             if (state is RefreshLocationState) {
